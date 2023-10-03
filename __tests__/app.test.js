@@ -102,7 +102,7 @@ describe("/api/articles/:article_id", () => {
 
  }); // end of "/api/articles/:article_id" testing
 
- describe("/api/articles", () => {
+describe("/api/articles", () => {
 
   test("returns correct status code and full array of 13 articles", () => {
     return request(app)
@@ -126,15 +126,17 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles")
       .then((data) => {
           data.body.articles.forEach( (article) => {
-              expect(article.hasOwnProperty('author')).toBe(true);
-              expect(article.hasOwnProperty('title')).toBe(true);
-              expect(article.hasOwnProperty('article_id')).toBe(true);
-              expect(article.hasOwnProperty('topic')).toBe(true);
-              expect(article.hasOwnProperty('created_at')).toBe(true);
-              expect(article.hasOwnProperty('votes')).toBe(true);
-              expect(article.hasOwnProperty('article_img_url')).toBe(true);
-              expect(article.hasOwnProperty('comment_count')).toBe(true);
-              expect(article.hasOwnProperty('body')).toBe(false);
+
+            expect(typeof article.author).toBe('string');
+            expect(typeof article.title).toBe('string');
+            expect(typeof article.article_id).toBe('number');
+            expect(typeof article.topic).toBe('string');
+            expect(typeof article.created_at).toBe('string');
+            expect(typeof article.votes).toBe('number');
+            expect(typeof article.article_img_url).toBe('string');
+            expect(typeof article.comment_count).toBe('string');
+            expect(article.hasOwnProperty('body')).toBe(false);
+
           })
       })
   })
