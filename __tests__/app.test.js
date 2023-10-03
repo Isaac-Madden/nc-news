@@ -3,6 +3,7 @@ const db = require("../db/connection");
 const testData = require("../db/data/test-data");
 const request = require("supertest");
 const seed = require("../db/seeds/seed");
+const JSONendpoints = require("../endpoints.json");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -42,3 +43,61 @@ describe("Invalid path", () => {
   });
 }); // end of invalid path testing
 
+describe("/api", () => {
+
+  test("respond with 200 status code", () => {
+   return request(app).get("/api").expect(200);
+  });
+
+  test("respond with object listing all available endpoints", () => {
+    return request(app)
+     .get("/api")
+     .then((data) => {
+      expect(data.body.fetchEndPoints).toEqual(JSONendpoints);
+     });
+   });
+
+}); // end of "/api/topics" testing
+
+describe("/api/articles/:article_id", () => {
+
+  test("should respond with the correct status code", () => {
+    return request(app).get("/api/articles/2").expect(200);
+  })
+
+  test("responds with article object with matching id", () => {
+    return request(app)
+     .get("/api/articles/7")
+     .then(data => {
+      expect(data.body.article).toEqual({
+       article_id: 7,
+       title: "Z",
+       topic: "mitch",
+       author: "icellusedkars",
+       body: "I was hungry.",
+       created_at: "2020-01-07T14:08:00.000Z",
+       votes: 0,
+       article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      });
+     });
+  });
+
+  test("returns 404 error when valid id cannot be matched against article", () => {
+  return request(app)
+    .get("/api/articles/999")
+    .expect(404)
+    .then((data) => {
+    expect(data.body.msg).toBe("no article found");
+    });
+  });
+
+  test("returns 400 error when id submitted is invalid", () => {
+    return request(app)
+     .get("/api/articles/abadrequest")
+     .expect(400)
+     .then((data) => {
+      expect(data.body.msg).toBe("bad request");
+     });
+  });
+
+ }); // end of "/api/articles/:article_id" testing

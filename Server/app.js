@@ -1,14 +1,20 @@
 const express = require("express");
 const { getTopics } = require("./controllers/topics.controller");
-const { invalidPath } = require("./controllers/errors.controller");
+const { invalidPath, PSQLErrors, customErrors } = require("./controllers/errors.controller");
+const { getAPIEndPoints } = require("./controllers/api.controller.js");
+const { getArticleByID } = require("./controllers/articles.controller.js")
 
 const app = express();
 app.use(express.json());
 
-//CORE: GET /api/topics
+//CORE routes
 app.get("/api/topics", getTopics);
+app.get("/api", getAPIEndPoints);
+app.get("/api/articles/:article_id", getArticleByID);
 
-//catch invalid path - anything other than listed above
+//error catchers
+app.use(PSQLErrors);
+app.use(customErrors);
 app.use("/*", invalidPath);
 
 module.exports = app;
