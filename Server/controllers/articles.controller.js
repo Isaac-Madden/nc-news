@@ -1,4 +1,4 @@
-const { fetchArticleByID } = require("../models/articles.model.js");
+const { fetchArticleByID, fetchAllArticles } = require("../models/articles.model.js");
 
 exports.getArticleByID = (req, res, next) => {
 
@@ -11,3 +11,12 @@ exports.getArticleByID = (req, res, next) => {
      .catch( (err) => { next(err) })
 
 };
+
+exports.getAllArticles = (req, res, next) => {
+
+    fetchAllArticles()
+    .then( articles => {
+        res.status(200).send( {articles} )
+    })
+    .catch( (err) => { next(err) })
+}
