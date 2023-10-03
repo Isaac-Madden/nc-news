@@ -101,3 +101,53 @@ describe("/api/articles/:article_id", () => {
   });
 
  }); // end of "/api/articles/:article_id" testing
+
+describe("/api/articles", () => {
+
+  test("returns correct status code and full array of 13 articles", () => {
+    return request(app)
+    .get('/api/articles')
+    .expect(200)
+    .then((data) => {
+      expect(data.body.articles.length).toBe(13)
+    })
+  })
+
+  test("articles returned are sorted in decending order by created_at property", () => {
+    return request(app)
+    .get("/api/articles")
+    .then((data) => {
+        expect(data.body.articles).toBeSortedBy("created_at", { descending: true });
+    })
+  })
+
+  test("each article object needs specified properties. There should not be a body property", () => {
+      return request(app)
+      .get("/api/articles")
+      .then((data) => {
+          data.body.articles.forEach( (article) => {
+
+            expect(typeof article.author).toBe('string');
+            expect(typeof article.title).toBe('string');
+            expect(typeof article.article_id).toBe('number');
+            expect(typeof article.topic).toBe('string');
+            expect(typeof article.created_at).toBe('string');
+            expect(typeof article.votes).toBe('number');
+            expect(typeof article.article_img_url).toBe('string');
+            expect(typeof article.comment_count).toBe('string');
+            expect(article.hasOwnProperty('body')).toBe(false);
+
+          })
+      })
+  })
+
+  test("error passed and 404 returned if path is not a route", () => {
+      return request(app)
+      .get('/api/thisshouldfail')
+      .expect(404)
+      .then((data) => {
+          expect(data.body.msg).toBe('invalid path')
+      })
+  })
+
+}) // end of "/api/articles" testing
