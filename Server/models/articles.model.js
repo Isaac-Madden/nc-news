@@ -25,7 +25,6 @@ exports.fetchAllArticles = () => {
     ORDER BY articles.created_at DESC;`
 
     return db.query(queryString).then( data => {
-        console.log("************", typeof data.rows[0].comment_count)
         return data.rows;
     });
 
