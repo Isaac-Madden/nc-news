@@ -6,7 +6,7 @@ exports.fetchArticleByID = (article_id) => {
     .then((data) => {
 
         if (data.rows.length === 0) {
-         return Promise.reject({ status: 404, msg: "no article found" });
+            return Promise.reject({ status: 404, msg: "no article found" });
         }
 
         else return data.rows[0];
@@ -25,7 +25,6 @@ exports.fetchAllArticles = () => {
     ORDER BY articles.created_at DESC;`
 
     return db.query(queryString).then( data => {
-        console.log("************", typeof data.rows[0].comment_count)
         return data.rows;
     });
 
