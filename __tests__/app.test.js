@@ -204,7 +204,6 @@ describe("GET api/articles/:article_id/comments", () => {
 
 }); // end of "GET api/articles/:article_id/comments" testing
 
-
 describe("POST /api/articles/:article_id/comments", () => {
 
   test("responds with 201 status for successful requests", () => {
@@ -255,7 +254,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .then( data => {
       expect(data.body.msg).toBe("not found");
       });
-    })
+  })
 
   test("responds with 400 and error if username has not been defined", () => {
 
@@ -280,3 +279,71 @@ describe("POST /api/articles/:article_id/comments", () => {
   })
 
 }) // end of "POST /api/articles/:article_id/comments" testing
+
+describe("PATCH: /api/articles/:article_id", () => {
+
+  test("returns 202 status code following successful request", () => {
+
+   return request(app)
+    .patch("/api/articles/5")
+    .send( { inc_votes: 35 } )
+    .expect(202)
+  })
+
+  test("returns article with updated number of votes", () => {
+    return request(app)
+      .patch("/api/articles/9")
+      .send( { inc_votes: 15 } )
+      .then( data => {
+        expect(data.body.article).toMatchObject({
+          article_id: 9,
+          title: "They're not exactly dogs, are they?",
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'Well? Think about it.',
+          created_at: "2020-06-06T09:10:00.000Z",
+          votes: 15,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+        })
+      })
+  })
+
+  test("votes should still update when passed a negative number", () => {
+    return request(app)
+      .patch("/api/articles/9")
+      .send( { inc_votes: -5 } )
+      .then( data => {
+        expect(data.body.article).toMatchObject({
+          article_id: 9,
+          title: "They're not exactly dogs, are they?",
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'Well? Think about it.',
+          created_at: "2020-06-06T09:10:00.000Z",
+          votes: -5,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+        })
+      })
+  })
+
+  test("returns 400 and error when no votes object passed", () => {
+    return request(app)
+      .patch("/api/articles/9")
+      .send()
+      .expect(400)
+      .then( data => {
+        expect(data.body.msg).toBe("no votes submitted")
+      })
+  })
+
+  test("return 404 and error if unable to match article_id", () => {
+    return request(app)
+      .patch("/api/articles/9999")
+      .send( { inc_votes: 25 } )
+      .expect(404)
+      .then( data => {
+      expect(data.body.msg).toBe("no article found");
+    })
+  })
+
+}) // end of "PATCH: /api/articles/:article_id" testing
