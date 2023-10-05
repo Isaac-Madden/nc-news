@@ -390,3 +390,25 @@ describe("DELETE: /api/comments/:comment_id", () => {
   })
 
 }) // end of "DELETE: /api/comments/:comment_id" testing
+
+describe("GET: /api/users", () => {
+
+  test("responds with 200 status", () => {
+   return request(app)
+    .get("/api/users")
+    .expect(200)
+  })
+
+  test("return array of users as objects, with username, name and avatar_url properties", () => {
+    return request(app)
+    .get("/api/users")
+      .then( data => {
+        expect(data.body.users.length).toBe(4)
+        data.body.users.forEach( user => {
+          expect(typeof user.username).toBe('string')
+          expect(typeof user.name).toBe('string')
+          expect(typeof user.avatar_url).toBe('string')
+        })
+      })
+  })
+}); // end of ""GET: /api/users" testing
