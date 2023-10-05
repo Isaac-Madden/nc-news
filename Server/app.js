@@ -4,7 +4,7 @@ const { invalidPath, PSQLErrors, customErrors } = require("./controllers/errors.
 const { getAPIEndPoints } = require("./controllers/api.controller.js");
 const { getArticleByID, getAllArticles, patchArticleByID } = require("./controllers/articles.controller.js")
 const { getCommentsByArticleID, postCommentByArticleID, deleteCommentByID } = require("./controllers/comments.controller.js")
-
+const { getAPIUsers } = require("./controllers/users.controller.js");
 
 const app = express();
 app.use(express.json());
@@ -18,7 +18,7 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
 app.post("/api/articles/:article_id/comments", postCommentByArticleID);
 app.patch("/api/articles/:article_id", patchArticleByID);
 app.delete("/api/comments/:comment_id", deleteCommentByID);
-
+app.get("/api/users", getAPIUsers)
 
 //error catchers
 app.use(PSQLErrors);
