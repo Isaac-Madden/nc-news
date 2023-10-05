@@ -152,7 +152,7 @@ describe("/api/articles", () => {
 
 }) // end of "/api/articles" testing
 
-describe("api/articles/:article_id/comments", () => {
+describe("GET api/articles/:article_id/comments", () => {
 
   test("returns 200 status code if comment with matching article_id exists", () => {
     return request(app)
@@ -202,4 +202,148 @@ describe("api/articles/:article_id/comments", () => {
     })
   })
 
-}); // end of "api/articles/:article_id/comments" testing
+}); // end of "GET api/articles/:article_id/comments" testing
+
+describe("POST /api/articles/:article_id/comments", () => {
+
+  test("responds with 201 status for successful requests", () => {
+
+   return request(app)
+    .post("/api/articles/5/comments")
+    .send( {username: "butter_bridge", body: "this is a test"} )
+    .expect(201)
+  })
+
+  test("responds with newly added comment", () => {
+
+   return request(app)
+    .post("/api/articles/5/comments")
+    .send( {username: "icellusedkars", body: "also a test"} )
+    .then( data => {
+      expect(data.body.comment_added).toEqual(
+        expect.objectContaining({
+          comment_id: 19,
+          body: "also a test",
+          article_id: 5,
+          author: "icellusedkars",
+          votes: 0,
+          created_at: expect.any(String),
+        })
+      )
+    })
+  })
+
+  test("error passed to handlers, responds with 404 when username violates foreign key constraint", () => {
+
+    return request(app)
+     .post("/api/articles/3/comments")
+     .send( { username: "isaac", body: "this shouldn't work" } )
+     .expect(404)
+     .then( data => {
+      expect(data.body.msg).toBe("not found");
+     })
+
+  })
+
+  test("responds with 404 and error if key is not present in articles table", () => {
+
+    return request(app)
+      .post("/api/articles/999/comments")
+      .send( {username: "icellusedkars", body: "also shouldn't work"} )
+      .expect(404)
+      .then( data => {
+      expect(data.body.msg).toBe("not found");
+      });
+  })
+
+  test("responds with 400 and error if username has not been defined", () => {
+
+    return request(app)
+    .post("/api/articles/5/comments")
+    .send( {body: "this is a test"} )
+    .expect(400)
+    .then( data => {
+      expect(data.body.msg).toBe("incomplete request, provide username")
+   })
+  })
+
+  test("responds with 400 and error if body has not been defined", () => {
+
+    return request(app)
+    .post("/api/articles/5/comments")
+    .send( {username: "icellusedkars"} )
+    .expect(400)
+    .then( data => {
+      expect(data.body.msg).toBe("incomplete request, please add a comment")
+   })
+  })
+
+}) // end of "POST /api/articles/:article_id/comments" testing
+
+describe("PATCH: /api/articles/:article_id", () => {
+
+  test("returns 202 status code following successful request", () => {
+
+   return request(app)
+    .patch("/api/articles/5")
+    .send( { inc_votes: 35 } )
+    .expect(202)
+  })
+
+  test("returns article with updated number of votes", () => {
+    return request(app)
+      .patch("/api/articles/9")
+      .send( { inc_votes: 15 } )
+      .then( data => {
+        expect(data.body.article).toMatchObject({
+          article_id: 9,
+          title: "They're not exactly dogs, are they?",
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'Well? Think about it.',
+          created_at: "2020-06-06T09:10:00.000Z",
+          votes: 15,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+        })
+      })
+  })
+
+  test("votes should still update when passed a negative number", () => {
+    return request(app)
+      .patch("/api/articles/9")
+      .send( { inc_votes: -5 } )
+      .then( data => {
+        expect(data.body.article).toMatchObject({
+          article_id: 9,
+          title: "They're not exactly dogs, are they?",
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'Well? Think about it.',
+          created_at: "2020-06-06T09:10:00.000Z",
+          votes: -5,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+        })
+      })
+  })
+
+  test("returns 400 and error when no votes object passed", () => {
+    return request(app)
+      .patch("/api/articles/9")
+      .send()
+      .expect(400)
+      .then( data => {
+        expect(data.body.msg).toBe("no votes submitted")
+      })
+  })
+
+  test("return 404 and error if unable to match article_id", () => {
+    return request(app)
+      .patch("/api/articles/9999")
+      .send( { inc_votes: 25 } )
+      .expect(404)
+      .then( data => {
+      expect(data.body.msg).toBe("no article found");
+    })
+  })
+
+}) // end of "PATCH: /api/articles/:article_id" testing

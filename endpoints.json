@@ -40,5 +40,48 @@
       "votes": 0,
       "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
     }
-   }
+  }, 
+
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves array of article comments with specified article_id",
+    "queries": [],
+    "exampleResponse": {
+     "comment_id": 7,
+     "body": "Lobster pot",
+     "article_id": 1,
+     "author": "icellusedkars",
+     "votes": 0,
+     "created_at": "2020-05-15T21:19:00.000Z"
+    }
+  }, 
+
+  "POST /api/articles/:article_id/comments": {
+    "description": "Adds a new comment, linked to the article_id specified and returns said comment",
+    "queries": [],
+    "exampleResponse": {
+     "comment_id": 19,
+     "body": "add comment in here",
+     "article_id": 5,
+     "author": "icellusedkars",
+     "votes": 0,
+     "created_at": "2023-10-04T17:16:06.000Z"
+    },
+    "requestBodyFormat": { "username": "string", "body": "string" }
+  },
+
+   "PATCH /api/articles/:article_id": {
+    "description": "updates the vote count on specified article, returns updated article",
+    "queries": [],
+    "exampleResponse": {
+     "article_id": 9,
+     "title": "They're not exactly dogs, are they?",
+     "topic": "mitch",
+     "author": "butter_bridge",
+     "body": "Well? Think about it.",
+     "created_at": "2020-06-06T09:10:00.000Z",
+     "votes": 15,
+     "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+    },
+    "requestBodyFormat":{ "inc_votes": "number" }
+  }
 }
