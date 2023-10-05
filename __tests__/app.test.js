@@ -347,3 +347,46 @@ describe("PATCH: /api/articles/:article_id", () => {
   })
 
 }) // end of "PATCH: /api/articles/:article_id" testing
+
+describe("DELETE: /api/comments/:comment_id", () => {
+
+  test("responds with 204 status, deletes the comment object", () => {
+   return request(app)
+    .delete("/api/comments/14")
+    .expect(204)
+    .then( () => {
+      return request(app).get("/api/articles/5/comments")
+        .then( data => {
+          expect(data.body.comments).toEqual(
+            [{
+              "comment_id": 15,
+              "body": "I am 100% sure that we're not completely sure.",
+              "article_id": 5,
+              "author": "butter_bridge",
+              "votes": 1,
+              "created_at": "2020-11-24T00:08:00.000Z"
+            }]
+          )
+        })
+    })
+  })
+
+  test("responds with 404 and error if no match found for comment_id", () => {
+    return request(app)
+     .delete("/api/comments/9999")
+     .expect(404)
+     .then( data => {
+      expect(data.body.msg).toBe("no comment matching that id found");
+     })
+  })
+
+  test("when passed invalid comment_id, error is passed to handler, 400 and error returned", () => {
+    return request(app)
+     .delete("/api/comments/notanumber")
+     .expect(400)
+     .then( data => {
+      expect(data.body.msg).toBe("bad request");
+     });
+  })
+
+}) // end of "DELETE: /api/comments/:comment_id" testing
