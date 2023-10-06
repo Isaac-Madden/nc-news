@@ -15,8 +15,10 @@ exports.getArticleByID = (req, res, next) => {
 exports.getAllArticles = (req, res, next) => {
 
     const topicQuery = req.query.topic
+    const sortBy = req.query.sort_by
+    const sortOrder = req.query.order
 
-    fetchAllArticles(topicQuery)
+    fetchAllArticles(topicQuery, sortBy, sortOrder)
     .then( articles => {
         res.status(200).send( {articles} )
     })
