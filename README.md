@@ -16,7 +16,7 @@ If you wish to clone this repository, please follow this link: https://github.co
 
 ### To install the dependencies, 'npm install' into the terminal
 
-Node.js : 20.3.0 and Postgres : 8.7.3 arethe minimum versions required.
+Node.js : 20.3.0 and Postgres : 8.7.3 are the minimum versions required.
 
 ### If you wish to run this locally, below is a list of dev-dependencies (and how to install them in the terminal):
 
@@ -45,5 +45,6 @@ Node.js : 20.3.0 and Postgres : 8.7.3 arethe minimum versions required.
 ### Finally, you will also need to connect to the databases:
 
 To do this, add the environment variables by creating two .env files in the root folder:
+
     .env.test > PGDATABASE=nc_news_test
     .env.development > PGDATABASE=nc_news
