@@ -14,12 +14,14 @@ exports.getArticleByID = (req, res, next) => {
 
 exports.getAllArticles = (req, res, next) => {
 
-    fetchAllArticles()
+    const topicQuery = req.query.topic
+
+    fetchAllArticles(topicQuery)
     .then( articles => {
         res.status(200).send( {articles} )
     })
     .catch( (err) => { next(err) })
-}
+};
 
 exports.patchArticleByID = (req, res, next) => {
 

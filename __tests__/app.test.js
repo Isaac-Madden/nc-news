@@ -59,7 +59,7 @@ describe("/api", () => {
 
 }); // end of "/api/topics" testing
 
-describe("/api/articles/:article_id", () => {
+describe("/api/articles/:article_id - including feature task 12 update", () => {
 
   test("should respond with the correct status code", () => {
     return request(app).get("/api/articles/2").expect(200);
@@ -78,9 +78,19 @@ describe("/api/articles/:article_id", () => {
        created_at: "2020-01-07T14:08:00.000Z",
        votes: 0,
        article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-      });
-     });
-  });
+       comment_count: "0"
+      })
+     })
+  })
+
+  test("same test, but with article which actually has comments", () => {
+    return request(app)
+     .get("/api/articles/1")
+     .then(data => {
+      expect(data.body.article.article_id).toBe(1)
+      expect(data.body.article.comment_count).toBe("11")
+     })
+  })
 
   test("returns 404 error when valid id cannot be matched against article", () => {
   return request(app)
@@ -89,7 +99,7 @@ describe("/api/articles/:article_id", () => {
     .then((data) => {
     expect(data.body.msg).toBe("no article found");
     });
-  });
+  })
 
   test("returns 400 error when id submitted is invalid", () => {
     return request(app)
@@ -98,9 +108,9 @@ describe("/api/articles/:article_id", () => {
      .then((data) => {
       expect(data.body.msg).toBe("bad request");
      });
-  });
+  })
 
- }); // end of "/api/articles/:article_id" testing
+}); // end of "/api/articles/:article_id" testing
 
 describe("/api/articles", () => {
 
@@ -411,4 +421,34 @@ describe("GET: /api/users", () => {
         })
       })
   })
-}); // end of ""GET: /api/users" testing
+}); // end of "GET: /api/users" testing
+
+describe("GET: /api/articles/?topic=query", () => {
+
+  test("responds with a 200 status code", () => {
+    return request(app)
+     .get("/api/articles?topic=cats")
+     .expect(200)
+  })
+
+  test("responds with array of articles of selected topic", () => {
+    return request(app)
+    .get("/api/articles?topic=mitch")
+    .then( data => {
+      expect(data.body.articles.length).toBe(12);
+      data.body.articles.forEach( article => {
+      expect(article.topic).toBe("mitch")
+      })
+    })
+  })
+
+  test("respond with 404 and error when unable to find an article with matching topic", () => {
+   return request(app)
+    .get("/api/articles?topic=paper")
+    .expect(404)
+    .then( data => {
+     expect(data.body.msg).toBe("no article matching that topic found");
+    })
+  }) 
+
+}) // end of "GET: /api/articles/?topic=query" testing
