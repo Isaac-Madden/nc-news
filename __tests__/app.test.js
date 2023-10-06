@@ -452,3 +452,67 @@ describe("GET: /api/articles/?topic=query", () => {
   }) 
 
 }) // end of "GET: /api/articles/?topic=query" testing
+
+describe("/api/articles?sort_by=&order=", () => {
+
+  test("returns a 200 for successful calls", () => {
+    return request(app)
+    .get("/api/articles?sort_by=author")
+    .expect(200)
+  })
+
+  test("each article object returned needs specified properties. There should not be a body property", () => {
+    return request(app)
+    .get("/api/articles?sort_by=author")
+    .then((data) => {
+          data.body.articles.forEach( (article) => {
+            expect(typeof article.author).toBe('string');
+            expect(typeof article.title).toBe('string');
+            expect(typeof article.article_id).toBe('number');
+            expect(typeof article.topic).toBe('string');
+            expect(typeof article.created_at).toBe('string');
+            expect(typeof article.votes).toBe('number');
+            expect(typeof article.article_img_url).toBe('string');
+            expect(typeof article.comment_count).toBe('string');
+            expect(article.hasOwnProperty('body')).toBe(false);
+          })
+      })
+  })
+
+  test("returns all articles, sorted in decending order by default", () => {
+    return request(app)
+    .get("/api/articles?sort_by=author")
+    .then((data) => {
+      expect(data.body.articles.length).toBe(13);
+      expect(data.body.articles).toBeSortedBy("author", { descending: true });
+    })
+  })
+
+  test("orders sorted by ascending order if specified in query", () => {
+    return request(app)
+    .get("/api/articles?sort_by=author&order=asc")
+    .then((data) => {
+      expect(data.body.articles.length).toBe(13);
+      expect(data.body.articles).toBeSortedBy("author", { descending: false });
+    })
+  })
+
+  test("sespond with 400 and eoor when passed invalid sort_by query", () => {
+    return request(app)
+     .get("/api/articles?sort_by=notacolumn")
+     .expect(400)
+     .then( data => {
+      expect(data.body.msg).toBe("invalid sort_by query");
+     });
+   });
+
+  test("responds with 400 and error when passed an order query that isn't ASC or DESC", () => {
+    return request(app)
+     .get("/api/articles?order=whatever")
+     .expect(400)
+     .then(data => {
+      expect(data.body.msg).toBe("invalid sort_by order");
+     });
+  });
+  
+}) // end of "/api/articles?sort_by" testing
