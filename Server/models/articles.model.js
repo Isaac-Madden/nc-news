@@ -88,7 +88,7 @@ exports.fetchAllArticles = (topicQuery, sortBy = "created_at", sortOrder = "desc
         return db.query(queryString)
         .then( data => { return data.rows })
     }
-}
+};
 
 exports.updateArticleByID = (article_id, inc_votes) => {
 
