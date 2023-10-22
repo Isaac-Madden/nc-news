@@ -6,7 +6,9 @@ const { getArticleByID, getAllArticles, patchArticleByID } = require("./controll
 const { getCommentsByArticleID, postCommentByArticleID, deleteCommentByID } = require("./controllers/comments.controller.js")
 const { getAPIUsers } = require("./controllers/users.controller.js");
 
+const cors = require("cors");
 const app = express();
+app.use(cors())
 app.use(express.json());
 
 //CORE routes
