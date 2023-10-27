@@ -35,7 +35,8 @@ exports.fetchAllArticles = (topicQuery, sortBy = "created_at", sortOrder = "desc
         body: "body",
         created_at: "created_at",
         votes: "votes",
-        article_img_url: "article_img_url"
+        article_img_url: "article_img_url",
+        comment_count: "comment_count"
     }
        
     const validOrders = {
@@ -59,7 +60,7 @@ exports.fetchAllArticles = (topicQuery, sortBy = "created_at", sortOrder = "desc
         queryString += " WHERE topic = $1 GROUP BY articles.article_id"
 
         if(sortBy !== undefined){ 
-            queryString += ` ORDER BY articles.${sortBy} ${sortOrder}`
+            queryString += ` ORDER BY ${sortBy} ${sortOrder}`
         }
         else{ 
             queryString += " ORDER BY articles.created_at DESC;" 
