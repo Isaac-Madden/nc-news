@@ -80,7 +80,7 @@ exports.fetchAllArticles = (topicQuery, sortBy = "created_at", sortOrder = "desc
         queryString += " GROUP BY articles.article_id"
 
         if(sortBy !== undefined){
-            queryString += ` ORDER BY articles.${sortBy} ${sortOrder}`
+            queryString += ` ORDER BY ${sortBy} ${sortOrder}`
         }
         else{
             queryString += " ORDER BY articles.created_at DESC;"
